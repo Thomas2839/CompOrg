@@ -1,16 +1,22 @@
 #include <stdio.h>
 
+int hexValue = 0000;
+int octalValue = 000000;
+int decimalValue = 0;
+char inputMode[] = "Dec"; // By making these global variables we ensure they remain on recursive calls
 
 void createMenu() {
     int optInput;
 
-    char menu[] =
-    "****************************************\n"//The function will overlap w\ itself on repeat calls. Solve that case by case
-    "* Base Values:         Input Mode: Oct *\n"
-    "*   Hex     :  3435                    *\n"
-    "*   Octal   :  032065                  *\n"
-    "*   Decimal :  13365                   *\n"// replace placeholder values with real ones
-    "****************************************\n"
+    char menu[500]; // Ensure the buffer is large enough
+
+    snprintf(menu, sizeof(menu),
+        "****************************************\n" //TODO The function will overlap w\ itself on repeat calls. Solve that case by case
+        "* Base Values:         Input Mode: %s *\n"
+        "*   Hex     :  %04X                    *\n"
+        "*   Octal   :  %06o                  *\n"
+        "*   Decimal :  %d                       *\n"// TODO Remove dynamic asterisk placement
+        "****************************************\n"
     "\n"
     "Please select one of the following options:\n\n"
     "O  Octal Mode\n"
@@ -19,17 +25,17 @@ void createMenu() {
     "C  Clear Value\n"
     "S  Set Value\n\n"
     "Q Quit\n\n"
-    "Option: ";
+    "Option: ",
+    inputMode, hexValue, octalValue, decimalValue);
 
     printf("%s", menu);
 
-    scanf("%c", &optInput);
+    scanf(" %c", &optInput);
 
     switch (optInput)
     {
     case 'O':
-        printf("Enter Octal Value\n");
-        scanf("%o", &optInput);
+        strcpy(inputMode, "Oct");
         break;
     case 'H':
         break;
@@ -38,12 +44,17 @@ void createMenu() {
     case 'C':
         break;
     case 'S':
+        printf("Enter Octal Value: ");
+        scanf("%o", &octalValue);  // Fixed: Read octal value properly
+        decimalValue = octalValue;
+        hexValue = octalValue;
         break;
     case 'Q':
         break;
     default:
-        createMenu();
+
     }
+    createMenu();
 }
 
 int main(void)
